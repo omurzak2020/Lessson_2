@@ -1,4 +1,4 @@
-package kg.geektech.android3.lessson_2.ui;
+package kg.geektech.android3.lessson_2;
 
 import androidx.appcompat.app.AppCompatActivity;
 
