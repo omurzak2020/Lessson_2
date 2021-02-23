@@ -1,9 +1,13 @@
 package kg.geektech.android3.lessson_2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -11,18 +15,31 @@ import kg.geektech.android3.lessson_2.R;
 import kg.geektech.android3.lessson_2.data.model.Film;
 import kg.geektech.android3.lessson_2.data.remote.GhibliApi;
 import kg.geektech.android3.lessson_2.data.remote.RetrofitFactory;
+import kg.geektech.android3.lessson_2.ui.AdapterFilm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterFilm.Listenerr {
 
+    private RecyclerView recyclerView;
+    private AdapterFilm adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        initRecycler();
         loadFilm();
+
+    }
+
+    private void initRecycler() {
+        adapter = new AdapterFilm();
+        recyclerView = findViewById(R.id.recycler);
+        recyclerView.setAdapter(adapter);
+        adapter.setListenerr(this);
+        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.VERTICAL));
+        recyclerView.addItemDecoration(new DividerItemDecoration(this,DividerItemDecoration.HORIZONTAL));
     }
 
     private void loadFilm() {
@@ -50,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<List<Film>> call, Response<List<Film>> response) {
                         if(response.isSuccessful() && response.body() != null){
                             Log.e("jajaja", "onResponse: "+ response.body().size());
+
+                            adapter.setlist(response.body());
                         }
                     }
 
@@ -58,5 +77,16 @@ public class MainActivity extends AppCompatActivity {
                         Log.e("jajaja", "onResponse: "+ t.getLocalizedMessage());
                     }
                 });
+    }
+
+    @Override
+    public void onFilmClick(String id) {
+
+        Intent intent = new Intent(MainActivity.this, SecondActivity.class);
+        intent.putExtra("key",id);
+
+        startActivity(intent);
+
+        Toast.makeText(this,"ass", Toast.LENGTH_SHORT).show();
     }
 }
